@@ -1,56 +1,7 @@
-// A2 Rasterization Code
+// Final Project: Ray Tracing
 // Name: Nick Scrivanich
 // NetId: ns1284
-// Goal: Implement a set of rasterization operations
-// - Line drawing
-// - Polygon drawing
-// - Some other operations
-
-// Undergraduates will do their rendering on the CPU in JS and
-// just use the shaders without modification. Graduate students will render
-// lines/triangles on the GPU directly, and only use the CPU/JS
-// to set up those calls as appropriate.
-//
-// Functions that can be called:
-
-// - drawPointsGPU(points, colors): Draws a set of points (a list of [x,y]
-//      pairs) and their corresponding colors ([r,g,b,a] tuples as 0..255). 
-//      Should be one color per point
-
-// - drawLineGPU(vertices, colors): Draw a line on the GPU between vertices[0]
-//      and vertices[1], both [x,y] pairs, of the given color ([r,g,b,a] tuple
-//      as 0..255). All pixels in the axis-aligned bounding box of the line will
-//      be sent as fragments to be tested. (To become operational, this function
-//      must be implemented in the fragment shader).
-
-// - drawTriangleGPU(vertices, colors): Draw a triangle vertices[0..3], as [x,y]
-//      pairs, of the given color ([r,g,b,a] tuple as 0..255). All pixels in the
-//      axis-aligned bounding box of the triangle will be sent as fragments to
-//      be tested. (To become operational, this function must be implemented in
-//      the fragment shader).
-
-// Functions to be implemented:
-
-// - drawLine(x0, y0, x1, y1): Draw a line between the two endpoints [x0, y0]
-//      and [x1, y1] using the algorithm of the student's choice. May or may
-//      not be antialiased. Graduate Students will call drawLineGPU from here.
-//      Undergraduates will manually generate a list of points to be rendered
-//      via drawPointsGPU.
-
-// - drawPolygon(points): Draw a polygon from the list of points [[x, y], ..., 
-//      [x,y]]. May or may not be antialiased. Convex polygons must be tessellated
-//      into triangles to be rendered; concave polygons are optionally supported.
-//      Undergraduates will rasterize manually and use drawPointsGPU; Graduates
-//      will split into triangles and use drawTriangleGPU for each.
-
-// Functions that may be implemented:
-
-// - drawCircle(x0, y0, r): Draw an unfilled circle at center [x0,y0] and radius
-//      r. May or may not be antialiased. 
-
-// - drawCurve(type, points, closed): Draw an open or closed spline curve using
-//      method type ("chaikin" or "bezier") using the control polygon points
-//      [[x,y],...,[x,y]]. May or may not be antialiased. 
+// Goal:...
 
 // HTML elements we need
 const canvas = document.getElementById("canvas");

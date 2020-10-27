@@ -1,7 +1,7 @@
-// A2 Rasterization fragment shader
+//
 // Name: Nick Scrivanich
 // NetId: ns1284
-// Goal: Implement a set of rasterization operations
+// Goal:
 
 precision highp float;
 
