@@ -8,8 +8,8 @@ var canvas = document.createElement("canvas");
 var ctx = canvas.getContext("2d");
 
 // width and height of final image
-const WIDTH = 1280;
-const HEIGHT = 720;
+const WIDTH = 900;
+const HEIGHT = 900;
 const aspectRatio = WIDTH / HEIGHT;
 
 // size the canvas to your desired image
@@ -71,6 +71,7 @@ var sphere = new Sphere(centerSphere, 1, green);
 // create plane
 var plane = new Plane(Y, -1, gray);
 
+// offset for each pixel
 var xAmount;
 var yAmount;
 
@@ -78,19 +79,14 @@ var yAmount;
 for (var y = 0; y < HEIGHT; y++) {
     for (var x = 0; x < WIDTH; x++) {
 
-        if (WIDTH > HEIGHT) {
-            xAmount = ((x + 0.5) / WIDTH) * aspectRatio - (((WIDTH - HEIGHT)))
-            yAmount = ((HEIGHT - y) + 0.5) / HEIGHT;
-        }
-        else if (HEIGHT > WIDTH) {
-            xAmount = (x + 0.5) / WIDTH;
-            yAmount = 
+        // start firing rays where the origin of the ray is the camera's origin 
+        //and the direction is the vector from the camera's origin to the center of the pixel
+        xAmount = (x + 0.5) / WIDTH;
+        yAmount = ((HEIGHT - y) + 0.5) / HEIGHT;
 
-        }
-        else {
-            xAmount = (x + 0.5) / WIDTH;
-            yAmount = ((HEIGHT - y) + 0.5) / HEIGHT;
-        }
+        var cameraRayOrigin = cameraPosition;
+        var camRayDir = cameraDir.add(cameraRight.multiply(xAmount - 0.5).add(cameraDown.multiply(yAmount - 0.5))).unit();
+
         var pos = (y * WIDTH + x) * 4; // position in buffer based on x and y
         if ((x > 200 && x < 440) && (y > 200 && y < 280)) {
             data[pos] = 23;           // some R value [0, 255]
