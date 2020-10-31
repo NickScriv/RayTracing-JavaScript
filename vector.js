@@ -1,20 +1,22 @@
+// Source: https://evanw.github.io/lightgl.js/docs/vector.html
+// Note: This file has been slightly edited to suit the purposes of this ray tracer.
 function Vector(x, y, z) {
-    this.x = x || 0;
-    this.y = y || 0;
-    this.z = z || 0;
+    if (x !== undefined && (y === undefined && z === undefined)) {
+        this.x = x.x;
+        this.y = x.y;
+        this.z = x.z;
+    }
+    else {
+        this.x = x || 0;
+        this.y = y || 0;
+        this.z = z || 0;
+
+    }
+
 }
 
-Vector.prototype = {
-    getX: function () {
-        return this.x;
-    },
 
-    getY: function () {
-        return this.y;
-    },
-    getZ: function () {
-        return this.z;
-    },
+Vector.prototype = {
     negative: function () {
         return new Vector(-this.x, -this.y, -this.z);
     },
@@ -74,10 +76,7 @@ Vector.prototype = {
     clone: function () {
         return new Vector(this.x, this.y, this.z);
     },
-    init: function (x, y, z) {
-        this.x = x; this.y = y; this.z = z;
-        return this;
-    }
+
 };
 
 Vector.negative = function (a, b) {

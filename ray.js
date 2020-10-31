@@ -11,10 +11,6 @@ Ray.prototype = {
         return this.origin;
     },
 
-    init: function (dir, origin) {
-        this.direction = dir; this.origin = origin;
-        return this;
-    }
 };
 
 

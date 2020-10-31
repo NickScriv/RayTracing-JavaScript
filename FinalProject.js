@@ -3,18 +3,13 @@
 // NetId: ns1284
 // Goal:...
 
-var vec = new Vector(22, 22, 22);
-console.log(vec.getX());
-// create an offscreen canvas
+// create a canvas
 var canvas = document.createElement("canvas");
 var ctx = canvas.getContext("2d");
 
+// width and height of final image
 const WIDTH = 1280;
 const HEIGHT = 720;
-
-var X = new Vector(1, 0, 0);
-var Y = new Vector(0, 1, 0);
-var Z = new Vector(0, 0, 1);
 
 // size the canvas to your desired image
 canvas.width = WIDTH;
@@ -23,6 +18,46 @@ canvas.height = HEIGHT;
 // get the imageData and pixel array from the canvas
 var imgData = ctx.getImageData(0, 0, WIDTH, HEIGHT);
 var data = imgData.data;
+
+// basis vectors
+var X = new Vector(1, 0, 0);
+var Y = new Vector(0, 1, 0);
+var Z = new Vector(0, 0, 1);
+
+// TODO: Make camera position user defined.
+var cameraPosition = new Vector(3, 1.5, -4);
+
+// position for camera to look at, TODO: make this user defined
+var lookAt = new Vector(0, 0, 0);
+
+// vector between camera position and position to look at
+var btwVec = new Vector(cameraPosition.subtract(lookAt));
+
+// direction in which the camera looks
+var cameraDir = btwVec.negative().unit();
+
+// right local axis of the camera
+var cameraRight = Y.cross(cameraDir).unit();
+
+// down local axis of camera
+var cameraDown = cameraRight.cross(cameraDir);
+
+//create camera
+var camera = new Camera(cameraPosition, cameraDir, cameraRight, cameraDown);
+
+// add colors
+var whiteLight = new Color(1.0, 1.0, 1.0, 0);
+var green = new Color(0.5, 1.0, 0.5, 0.3);
+var gray = new Color(0.5, 0.5, 0.5, 0);
+var black = new Color(0, 0, 0, 0);
+
+//light position, TODO: make this user defined
+var lightPos = new Vector(-7, 10, -10);
+
+//define light
+var light = new Light(lightPos, whiteLight);
+
+
 
 // manipulate some pixel elements
 for (var y = 0; y < HEIGHT; y++) {
