@@ -3,256 +3,127 @@
 // NetId: ns1284
 // Goal:...
 
-// HTML elements we need
-const canvas = document.getElementById("canvas");
-const help = document.getElementById("help");
-const input = document.getElementById("commands");
-const color_div = document.getElementById("color");
-const sizer = document.getElementById("size");
+// create a canvas
+var canvas = document.createElement("canvas");
+var ctx = canvas.getContext("2d");
 
-// Some variables
-const color = [0, 0, 0, 255];
+// width and height of final image
+const WIDTH = 900;
+const HEIGHT = 900;
+const aspectRatio = WIDTH / HEIGHT;
 
-let drawPointsGPU = undefined;
-let drawLineGPU = undefined;
-let drawTriangleGPU = undefined;
+// size the canvas to your desired image
+canvas.width = WIDTH;
+canvas.height = HEIGHT;
 
-// Load regl module into the canvas element on the page.  For this assignment,
-// we turn off antialiasing (so we do it manually) and auto clearing the draw
-// buffer (so our drawing is preserved between calls).
-const regl = createREGL({
-    canvas: canvas,
-    attributes: {
-        antialias: false,
-        preserveDrawingBuffer: true
+// get the imageData and pixel array from the canvas
+var imgData = ctx.getImageData(0, 0, WIDTH, HEIGHT);
+var data = imgData.data;
+
+// basis vectors
+var X = new Vector(1, 0, 0);
+var Y = new Vector(0, 1, 0);
+var Z = new Vector(0, 0, 1);
+
+// origin
+var O = new Vector(0, 0, 0);
+
+// TODO: Make camera position user defined.
+var cameraPosition = new Vector(3, 1.5, -4);
+
+// position for camera to look at, TODO: make this user defined
+var lookAt = new Vector(0, 0, 0);
+
+// vector between camera position and position to look at
+var btwVec = new Vector(cameraPosition.subtract(lookAt));
+
+// direction in which the camera looks
+var cameraDir = btwVec.negative().unit();
+
+// right local axis of the camera
+var cameraRight = Y.cross(cameraDir).unit();
+
+// down local axis of camera
+var cameraDown = cameraRight.cross(cameraDir);
+
+//create camera with its coordinate frame
+var camera = new Camera(cameraPosition, cameraDir, cameraRight, cameraDown);
+
+// add colors
+var whiteLight = new Color(1.0, 1.0, 1.0, 0);
+var green = new Color(0.5, 1.0, 0.5, 0.3);
+var gray = new Color(0.5, 0.5, 0.5, 0);
+var black = new Color(0, 0, 0, 0);
+
+//light position, TODO: make this user defined
+var lightPos = new Vector(-7, 10, -10);
+
+//define light
+var light = new Light(lightPos, whiteLight);
+
+
+// sphere position, TODO: make this user defined
+var centerSphere = new Vector(0, 0, 0);
+
+// create sphere
+var sphere = new Sphere(centerSphere, 1, green);
+
+// create plane
+var plane = new Plane(Y, -1, gray);
+
+// offset for each pixel
+var xAmount;
+var yAmount;
+
+// manipulate some pixel elements
+for (var y = 0; y < HEIGHT; y++) {
+    for (var x = 0; x < WIDTH; x++) {
+
+        // start firing rays where the origin of the ray is the camera's origin 
+        //and the direction is the vector from the camera's origin to the center of the pixel
+        xAmount = (x + 0.5) / WIDTH;
+        yAmount = ((HEIGHT - y) + 0.5) / HEIGHT;
+
+        var cameraRayOrigin = cameraPosition;
+        var camRayDir = cameraDir.add(cameraRight.multiply(xAmount - 0.5).add(cameraDown.multiply(yAmount - 0.5))).unit();
+
+        var pos = (y * WIDTH + x) * 4; // position in buffer based on x and y
+        if ((x > 200 && x < 440) && (y > 200 && y < 280)) {
+            data[pos] = 23;           // some R value [0, 255]
+            data[pos + 1] = 222;           // some G value
+            data[pos + 2] = 10;           // some B value
+            data[pos + 3] = 255;             // set alpha channel
+
+        }
+        else {
+            data[pos] = 0;           // some R value [0, 255]
+            data[pos + 1] = 0;           // some G value
+            data[pos + 2] = 0;           // some B value
+            data[pos + 3] = 255;
+        }
+
+
     }
-});
-
-// Two data elements loaded from "web server": the two shader programs
-let vertexSource = undefined;
-let fragmentSource = undefined;
-
-// Set up two Fetch calls for the resources and process accordingly. 
-// Each one calls the init() function; this function only completes when
-// all resources are loaded. Always re-fetch so caching doesn't hurt us.
-function load() {
-    fetch('FinalProject.vert.glsl', { cache: "no-store" })
-        .then(function (response) {
-            return response.text();
-        })
-        .then(function (txt) {
-            vertexSource = txt;
-            init();
-        });
-
-    fetch('FinalProject.frag.glsl', { cache: "no-store" })
-        .then(function (response) {
-            return response.text();
-        })
-        .then(function (txt) {
-            fragmentSource = txt;
-            init();
-        });
 }
 
-// The initialization function. Checks for all resources before continuing.
-function init() {
-    // Is everything loaded?
-    if (vertexSource === undefined
-        || fragmentSource === undefined)
-        return;
+/*var pos = (y * WIDTH + x) * 4; // position in buffer based on x and y
+data[pos  ] = 255;           // some R value [0, 255]
+data[pos+1] = ...;           // some G value
+data[pos+2] = ...;           // some B value
+data[pos+3] = 255;      
+*/
 
-    // regl draw commands for the assignment. We have two:
-    // - reglPoints: Draws points to the screen directly. Used primarily
-    //               by undergraduates, who do calculations in JS (this file).
-    // - reglBox:    Forces entire box to be drawn. The GPU is then used to
-    //               determine if pixel is drawn or not. Used by graduate 
-    //               students for parallel line/triangle rendering.
-    const reglPoints = regl({
-        // viewport
-        viewport: {
-            x: 0,
-            y: 0,
-            width: ({ viewportWidth }) => viewportWidth,
-            height: ({ viewportHeight }) => viewportHeight
-        },
+// put the modified pixels back on the canvas
+ctx.putImageData(imgData, 0, 0);
 
-        blend: { enable: true },
+// create a new img object
+var image = new Image();
 
-        // fragment shader
-        frag: fragmentSource,
+// set the img.src to the canvas data url
+image.src = canvas.toDataURL();
 
-        // vertex shader
-        vert: vertexSource,
-
-        // attributes
-        attributes: {
-            // Draw a bunch of points with a bunch of colors
-            position: (context, { points }) => points.flat(),
-            inColor: (context, { colors }) => colors.flat(),
-        },
-
-        // vertices to draw: One per point
-        count: (context, { points }) => points.length,
-
-        primitive: 'points',
-
-        // uniforms
-        uniforms: {
-            viewport: ({ viewportWidth, viewportHeight }) => [viewportWidth, viewportHeight],
-            mode: 0, // Points
-            dpi: window.devicePixelRatio,
-            'vertices[0]': [0., 0.],
-            'vertices[1]': [0., 0.],
-            'vertices[2]': [0., 0.]
-        }
-    });
-    drawPointsGPU = (points, colors) => {
-        // Update the canvas size. Correct for window DPI.
-        width = canvas.clientWidth * window.devicePixelRatio;
-        height = canvas.clientHeight * window.devicePixelRatio;
-        if (canvas.width !== width || canvas.height !== height) {
-            canvas.width = width;
-            canvas.height = height;
-            regl.poll();
-        }
-        // Draw the points-based code.
-        reglPoints({ points: points, colors: colors });
-    };
-
-    const reglBox = regl({
-        // viewport
-        viewport: {
-            x: 0,
-            y: 0,
-            width: ({ viewportWidth }) => viewportWidth,
-            height: ({ viewportHeight }) => viewportHeight
-        },
-
-        // fragment shader
-        frag: fragmentSource,
-
-        // vertex shader
-        vert: vertexSource,
-
-        // attributes
-        attributes: {
-            // A quad big enough to hold all the control vertices
-            position: {
-                buffer: (context, { vertices }) => {
-                    // Bounding box of primitive. Grow by 1 pix in every direction
-                    // to correct for horizontal/vertical lines and add room for 
-                    // antialiasing.
-                    let min_i = Math.min(...vertices.flat().filter((n, i) => i % 2 == 0));
-                    let min_j = Math.min(...vertices.flat().filter((n, i) => i % 2 == 1));
-                    let max_i = Math.max(...vertices.flat().filter((n, i) => i % 2 == 0));
-                    let max_j = Math.max(...vertices.flat().filter((n, i) => i % 2 == 1));
-                    console.log(vertices, min_i, max_i, min_j, max_j);
-                    return regl.buffer(new Int16Array([
-                        min_i - 1, min_j - 1, max_i + 1, min_j - 1, max_i + 1, max_j + 1,
-                        min_i - 1, min_j - 1, max_i + 1, max_j + 1, min_i - 1, max_j + 1
-                    ]));
-                },
-                size: 2
-            },
-
-            inColor: { constant: (context, { color }) => color }
-        },
-
-        // vertices to draw
-        count: 6,
-
-        // uniforms
-        uniforms: {
-            viewport: ({ viewportWidth, viewportHeight }) => [viewportWidth, viewportHeight],
-            mode: (context, { mode }) => mode, // Lines or Triangles
-            dpi: window.devicePixelRatio,
-            'vertices[0]': (context, { vertices }) => vertices[0],
-            'vertices[1]': (context, { vertices }) => vertices[1],
-            'vertices[2]': (context, { mode, vertices }) =>
-                mode === 1 ? [0, 0] : vertices[2]
-        }
-    });
-    drawLineGPU = (vertices, color) => {
-        // Update the canvas size. Correct for DPI.
-        width = canvas.clientWidth * window.devicePixelRatio;
-        height = canvas.clientHeight * window.devicePixelRatio;
-        if (canvas.width !== width || canvas.height !== height) {
-            canvas.width = width;
-            canvas.height = height;
-            regl.poll();
-        }
-
-        // Draw the GPU-based code
-        reglBox({ mode: 1, color: color, vertices: vertices });
-    };
-    drawTriangleGPU = (vertices, color) => {
-        // Update the canvas size. Correct for DPI
-        width = canvas.clientWidth * window.devicePixelRatio;
-        height = canvas.clientHeight * window.devicePixelRatio;
-        if (canvas.width !== width || canvas.height !== height) {
-            canvas.width = width;
-            canvas.height = height;
-            regl.poll();
-        }
-
-        // Draw the GPU-based code
-        reglBox({ mode: 2, color: color, vertices: vertices });
-    };
-}
-
-// Call load when loaded
-window.addEventListener("load", load);
-
-// Handle window resizing
-function resized() {
-    sizer.innerHTML = "(" + canvas.clientWidth + ", " + canvas.clientHeight + ")";
-}
-window.addEventListener("resize", resized);
-window.addEventListener("load", resized);
-
-// Show or hide the help
-function toggle_help() {
-    help.style.display = (help.style.display == "none" ? "block" : "none");
-}
-
-// We will need to change or remove this section.
-function parse(value) {
-    const tokens = value.split(" ");
-    if (tokens.length < 1)
-        return;
-
-    switch (tokens[0]) {
-        case "line":
-            drawLine(...tokens.slice(1).map(x => window.devicePixelRatio * parseInt(x)));
-            break;
-        case "poly":
-            drawPolygon(tokens.slice(1).map(x => window.devicePixelRatio * parseInt(x)));
-            break;
-        case "clear":
-            regl.clear({ color: [1, 1, 1, 1], depth: 1 });
-            break;
-        case "color":
-            color[0] = parseInt(tokens[1]);
-            color[1] = parseInt(tokens[2]);
-            color[2] = parseInt(tokens[3]);
-            color_div.style.backgroundColor = "rgb(" + color[0] + "," + color[1] + "," + color[2] + ")";
-            break;
-        case "circle":
-            drawCircle(...tokens.slice(1).map(x => window.devicePixelRatio * parseInt(x)));
-            break;
-        case "curve":
-            drawCurve(tokens[1], tokens.slice(2).map(x => window.devicePixelRatio * parseInt(x)), false);
-            break;
-        case "closed":
-            drawCurve(tokens[1], tokens.slice(2).map(x => window.devicePixelRatio * parseInt(x)), true);
-            break;
-        default:
-            input.value = "<Invalid Input>";
-            return;
-    }
-    input.value = "";
-}
+// append the new img object to the page
+document.body.appendChild(image);
 
 
 
