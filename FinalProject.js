@@ -10,6 +10,7 @@ var ctx = canvas.getContext("2d");
 // width and height of final image
 const WIDTH = 1280;
 const HEIGHT = 720;
+const aspectRatio = WIDTH / HEIGHT;
 
 // size the canvas to your desired image
 canvas.width = WIDTH;
@@ -23,6 +24,9 @@ var data = imgData.data;
 var X = new Vector(1, 0, 0);
 var Y = new Vector(0, 1, 0);
 var Z = new Vector(0, 0, 1);
+
+// origin
+var O = new Vector(0, 0, 0);
 
 // TODO: Make camera position user defined.
 var cameraPosition = new Vector(3, 1.5, -4);
@@ -42,7 +46,7 @@ var cameraRight = Y.cross(cameraDir).unit();
 // down local axis of camera
 var cameraDown = cameraRight.cross(cameraDir);
 
-//create camera
+//create camera with its coordinate frame
 var camera = new Camera(cameraPosition, cameraDir, cameraRight, cameraDown);
 
 // add colors
@@ -58,10 +62,35 @@ var lightPos = new Vector(-7, 10, -10);
 var light = new Light(lightPos, whiteLight);
 
 
+// sphere position, TODO: make this user defined
+var centerSphere = new Vector(0, 0, 0);
+
+// create sphere
+var sphere = new Sphere(centerSphere, 1, green);
+
+// create plane
+var plane = new Plane(Y, -1, gray);
+
+var xAmount;
+var yAmount;
 
 // manipulate some pixel elements
 for (var y = 0; y < HEIGHT; y++) {
     for (var x = 0; x < WIDTH; x++) {
+
+        if (WIDTH > HEIGHT) {
+            xAmount = ((x + 0.5) / WIDTH) * aspectRatio - (((WIDTH - HEIGHT)))
+            yAmount = ((HEIGHT - y) + 0.5) / HEIGHT;
+        }
+        else if (HEIGHT > WIDTH) {
+            xAmount = (x + 0.5) / WIDTH;
+            yAmount = 
+
+        }
+        else {
+            xAmount = (x + 0.5) / WIDTH;
+            yAmount = ((HEIGHT - y) + 0.5) / HEIGHT;
+        }
         var pos = (y * WIDTH + x) * 4; // position in buffer based on x and y
         if ((x > 200 && x < 440) && (y > 200 && y < 280)) {
             data[pos] = 23;           // some R value [0, 255]
