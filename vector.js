@@ -52,6 +52,9 @@ Vector.prototype = {
     length: function () {
         return Math.sqrt(this.dot(this));
     },
+    length2: function () {
+        return Math.pow(this.x, 2) + Math.pow(this.y, 2) + Math.pow(this.z, 2);
+    },
     unit: function () {
         return this.divide(this.length());
     },

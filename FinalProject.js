@@ -8,8 +8,8 @@ var canvas = document.createElement("canvas");
 var ctx = canvas.getContext("2d");
 
 // width and height of final image
-const WIDTH = 900;
-const HEIGHT = 900;
+const WIDTH = 1280;
+const HEIGHT = 720;
 const aspectRatio = WIDTH / HEIGHT;
 
 // size the canvas to your desired image
@@ -29,31 +29,34 @@ var Z = new Vector(0, 0, 1);
 var O = new Vector(0, 0, 0);
 
 // TODO: Make camera position user defined.
-var cameraPosition = new Vector(3, 1.5, -4);
+var cameraPosition = new Vector(-3, 2, 4);
 
 // position for camera to look at, TODO: make this user defined
-var lookAt = new Vector(0, 0, 0);
+var target = new Vector(0, 2, 0);
 
 // vector between camera position and position to look at
-var btwVec = new Vector(cameraPosition.subtract(lookAt));
+var diffVec = new Vector(target.subtract(cameraPosition));
 
-// direction in which the camera looks
-var cameraDir = btwVec.negative().unit();
+// forwad vector of camera
+var cameraForward = diffVec.unit();
 
-// right local axis of the camera
-var cameraRight = Y.cross(cameraDir).unit();
+// right vector of the camera
+var cameraRight = cameraForward.cross(Y).unit();
 
-// down local axis of camera
-var cameraDown = cameraRight.cross(cameraDir);
+// up vector of camera
+var cameraUp = cameraRight.cross(cameraForward);
 
 //create camera with its coordinate frame
-var camera = new Camera(cameraPosition, cameraDir, cameraRight, cameraDown);
+var camera = new Camera(cameraPosition, cameraForward, cameraRight, cameraUp, Math.PI / 4, aspectRatio);
 
 // add colors
 var whiteLight = new Color(1.0, 1.0, 1.0, 0);
 var green = new Color(0.5, 1.0, 0.5, 0.3);
 var gray = new Color(0.5, 0.5, 0.5, 0);
 var black = new Color(0, 0, 0, 0);
+
+//--------------OBJECTS------------------------------------------------
+var objects = [];
 
 //light position, TODO: make this user defined
 var lightPos = new Vector(-7, 10, -10);
@@ -63,42 +66,69 @@ var light = new Light(lightPos, whiteLight);
 
 
 // sphere position, TODO: make this user defined
-var centerSphere = new Vector(0, 0, 0);
+var centerSphere = new Vector(0, 2, 0);
 
 // create sphere
 var sphere = new Sphere(centerSphere, 1, green);
 
 // create plane
-var plane = new Plane(Y, -1, gray);
+var plane = new Plane(new Vector(0, 0, 0), Y, gray);
 
-// offset for each pixel
-var xAmount;
-var yAmount;
+objects.push(sphere);
+objects.push(plane);
+//--------------------------------------------------------------
 
 // manipulate some pixel elements
-for (var y = 0; y < HEIGHT; y++) {
-    for (var x = 0; x < WIDTH; x++) {
+for (var x = 0; x < WIDTH; x++) {
+    for (var y = 0; y < HEIGHT; y++) {
 
         // start firing rays where the origin of the ray is the camera's origin 
         //and the direction is the vector from the camera's origin to the center of the pixel
-        xAmount = (x + 0.5) / WIDTH;
+        /*xAmount = (x + 0.5) / WIDTH;
         yAmount = ((HEIGHT - y) + 0.5) / HEIGHT;
 
         var cameraRayOrigin = cameraPosition;
-        var camRayDir = cameraDir.add(cameraRight.multiply(xAmount - 0.5).add(cameraDown.multiply(yAmount - 0.5))).unit();
+        var camRayDir = cameraDir.add(cameraRight.multiply(xAmount - 0.5).add(cameraDown.multiply(yAmount - 0.5))).unit();*/
+        // translate pixel coordinate so it is in the range of [-1, 1]
+        var u = (2.0 * x) / WIDTH - 1.0;
+        var v = (-2.0 * y) / HEIGHT + 1.0;
+        //console.log(u + " " + v)
+
+        // shoot the ray
+        var ray = camera.shootRay(u, v);
+        //console.log(ray.direction.x + " " + ray.direction.y + " " + ray.direction.z)
+        var intersections = [];
+
+        // loop through all objects defined in the scene and determine if there is an intersection with the current ray
+        objects.forEach(function (o) {
+            // console.log(o.findIntersection(ray))
+            intersections.push(o.findIntersection(ray));
+        });
+
+
+        // find closest intersection to the camera
+        var firstObjectIndex = findFirstObject(intersections);
+
+
+
 
         var pos = (y * WIDTH + x) * 4; // position in buffer based on x and y
-        if ((x > 200 && x < 440) && (y > 200 && y < 280)) {
-            data[pos] = 23;           // some R value [0, 255]
-            data[pos + 1] = 222;           // some G value
-            data[pos + 2] = 10;           // some B value
+        if (firstObjectIndex == -1) {
+            // This pixel did not hit an object
+            data[pos] = 0;           // some R value [0, 255]
+            data[pos + 1] = 0;           // some G value
+            data[pos + 2] = 0;           // some B value
             data[pos + 3] = 255;             // set alpha channel
 
         }
         else {
-            data[pos] = 0;           // some R value [0, 255]
-            data[pos + 1] = 0;           // some G value
-            data[pos + 2] = 0;           // some B value
+
+            var color = objects[firstObjectIndex].color;
+            //console.log(currentObject);
+            //console.log(color.red * 255)
+            data[pos] = color.red * 255;           // some R value [0, 255]
+            data[pos + 1] = color.green * 255;           // some G value
+            data[pos + 2] = color.blue * 255;           // some B value
             data[pos + 3] = 255;
         }
 
@@ -126,4 +156,44 @@ image.src = canvas.toDataURL();
 document.body.appendChild(image);
 
 
+//----------------Functions-------------------------
+// returns the index of the closest object to the camera
+function findFirstObject(intersections) {
+    var minValue;
+    if (intersections.length < 1) {
+        return -1;
+    }
+    else if (intersections.length == 1) {
+        if (intersections[0] > 0) {
+            return 0;
+        }
+        else {
+            return -1;
+        }
+    }
+    else {
 
+        var max = -1;
+        intersections.forEach(function (num) {
+            if (max < num) {
+                max = num;
+            }
+        });
+
+        if (max > 0) {
+            for (var i = 0; i < intersections.length; i++)
+                if (intersections[i] > 0 && intersections[i] <= max) {
+                    max = intersections[i];
+                    minValue = i;
+
+                }
+
+            return minValue;
+        }
+        else {
+            return -1;
+        }
+
+
+    }
+}
