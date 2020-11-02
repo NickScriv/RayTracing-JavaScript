@@ -6,6 +6,15 @@ class Object {
 
     }
 
+    getNormalAt(point) {
+
+    }
+
+    findIntersection(ray) {
+
+    }
+
+
 }
 
 

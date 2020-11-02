@@ -1,16 +1,17 @@
-function Ray(dir, origin) {
-    this.origin = dir || new Vector(0, 0, 0);
-    this.direction = origin || new Vector(1, 0, 0);
+
+class Ray {
+
+    constructor(origin, dir) {
+        this.origin = origin || new Vector(0, 0, 0);
+        this.direction = dir || new Vector(1, 0, 0);
+        this.min = 0.0001;
+        this.max = 1000000000000000000000000000000;
+
+    }
+
+    clone() {
+        return new Ray(this.origin.clone(), this.direction.clone())
+    }
+
 }
-
-Ray.prototype = {
-    getOrigin: function () {
-        return this.origin;
-    },
-    getDir: function () {
-        return this.origin;
-    },
-
-};
-
 
