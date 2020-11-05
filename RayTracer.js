@@ -28,8 +28,10 @@ var Z = new Vector(0, 0, 1);
 // origin
 var O = new Vector(0, 0, 0);
 
+const ambientLight = 0.2;
+
 // TODO: Make camera position user defined.
-var cameraPosition = new Vector(-3, 2, 4);
+var cameraPosition = new Vector(-3, 12, 4);
 
 // position for camera to look at, TODO: make this user defined
 var target = new Vector(0, 2, 0);
@@ -55,14 +57,15 @@ var green = new Color(0.5, 1.0, 0.5, 0.3);
 var gray = new Color(0.5, 0.5, 0.5, 0);
 var black = new Color(0, 0, 0, 0);
 
-//--------------OBJECTS------------------------------------------------
+//--------------OBJECTS/LIGHTS------------------------------------------------
 var objects = [];
+var lights = [];
 
-//light position, TODO: make this user defined
-var lightPos = new Vector(-7, 10, -10);
+//position if lights, TODO: make this user defined
+var light1Pos = new Vector(0, 17, 0);
 
-//define light
-var light = new Light(lightPos, whiteLight);
+//define lights
+var light1 = new Light(light1Pos, whiteLight);
 
 
 // sphere position, TODO: make this user defined
@@ -76,19 +79,16 @@ var plane = new Plane(new Vector(0, 0, 0), Y, gray);
 
 objects.push(sphere);
 objects.push(plane);
+
+lights.push(light1);
+
 //--------------------------------------------------------------
 
 // manipulate some pixel elements
 for (var x = 0; x < WIDTH; x++) {
     for (var y = 0; y < HEIGHT; y++) {
 
-        // start firing rays where the origin of the ray is the camera's origin 
-        //and the direction is the vector from the camera's origin to the center of the pixel
-        /*xAmount = (x + 0.5) / WIDTH;
-        yAmount = ((HEIGHT - y) + 0.5) / HEIGHT;
-
-        var cameraRayOrigin = cameraPosition;
-        var camRayDir = cameraDir.add(cameraRight.multiply(xAmount - 0.5).add(cameraDown.multiply(yAmount - 0.5))).unit();*/
+        // start firing rays where the origin of the ray is the camera's origin.
         // translate pixel coordinate so it is in the range of [-1, 1]
         var u = (2.0 * x) / WIDTH - 1.0;
         var v = (-2.0 * y) / HEIGHT + 1.0;
@@ -96,17 +96,17 @@ for (var x = 0; x < WIDTH; x++) {
 
         // shoot the ray
         var ray = camera.shootRay(u, v);
-        //console.log(ray.direction.x + " " + ray.direction.y + " " + ray.direction.z)
+
         var intersections = [];
 
         // loop through all objects defined in the scene and determine if there is an intersection with the current ray
         objects.forEach(function (o) {
-            // console.log(o.findIntersection(ray))
+
             intersections.push(o.findIntersection(ray));
         });
 
 
-        // find closest intersection to the camera
+        // find closest intersection to the camera, this is analogous to a z buffer
         var firstObjectIndex = findFirstObject(intersections);
 
 
@@ -122,26 +122,23 @@ for (var x = 0; x < WIDTH; x++) {
 
         }
         else {
+            // get point of intersection and direction vectors
+            var intersectPosition = ray.origin.add(ray.direction.multiply(intersections[firstObjectIndex]))
+            var intersectDirection = ray.direction;
 
-            var color = objects[firstObjectIndex].color;
-            //console.log(currentObject);
-            //console.log(color.red * 255)
-            data[pos] = color.red * 255;           // some R value [0, 255]
-            data[pos + 1] = color.green * 255;           // some G value
-            data[pos + 2] = color.blue * 255;           // some B value
+            var colorIntersect = colorAt(intersectPosition, intersectDirection, firstObjectIndex);
+
+
+            //var color = objects[firstObjectIndex].color;
+            data[pos] = colorIntersect.red * 255;           // some R value [0, 255]
+            data[pos + 1] = colorIntersect.green * 255;           // some G value
+            data[pos + 2] = colorIntersect.blue * 255;           // some B value
             data[pos + 3] = 255;
         }
 
 
     }
 }
-
-/*var pos = (y * WIDTH + x) * 4; // position in buffer based on x and y
-data[pos  ] = 255;           // some R value [0, 255]
-data[pos+1] = ...;           // some G value
-data[pos+2] = ...;           // some B value
-data[pos+3] = 255;      
-*/
 
 // put the modified pixels back on the canvas
 ctx.putImageData(imgData, 0, 0);
@@ -196,4 +193,89 @@ function findFirstObject(intersections) {
 
 
     }
+}
+
+// Lambertian Shading
+function colorAt(intersectPosition, intersectDirection, firstObjectIndex) {
+
+    // color of the closest object 
+    var objectColor = objects[firstObjectIndex].color;
+
+    // factor in the ambient light coefficient
+    var finalColor = objectColor.scaleColor(ambientLight);
+
+    // normal vector of the closest object 
+    var objectNormal = objects[firstObjectIndex].getNormalAt(intersectPosition);
+
+    for (var j = 0; j < lights.length; j++) {
+
+
+        // get the direction of the light
+        var lightDirection = (lights[j].position.subtract(intersectPosition)).unit();
+
+        // angle of intesection point and light
+        var cosAngle = objectNormal.dot(lightDirection);
+
+
+        if (cosAngle > 0) { // intersection point is in view of the light
+
+            var shadow = false;
+
+            var distanceToLight = (lights[j].position.subtract(intersectPosition)).length();
+
+
+            // create a new ray from the interesection point to the light source and check if anything is blocking it
+            var shadowRay = new Ray(intersectPosition, (lights[j].position.subtract(intersectPosition)).unit())
+
+            var secondaryIntersections = [];
+
+            for (var i = 0; i < objects.length && !shadow; i++) {
+                secondaryIntersections.push(objects[i].findIntersection(shadowRay))
+            }
+
+            for (let curIntersection of secondaryIntersections) {
+
+                // if an intersection is smaller than the distance to the light source, then there is something in the way
+                if (curIntersection <= distanceToLight && curIntersection >= 0) {
+                    shadow = true;
+
+                    break;
+                }
+            }
+
+            if (!shadow) {
+
+                finalColor = finalColor.addColor(objectColor.multiplyColor(lights[j].color).scaleColor(cosAngle))
+
+                // check for shininess/reflection
+                if (objectColor.special > 0 && objectColor.special <= 1) {
+                    var d1 = objectNormal.dot(intersectDirection.negative())
+                    var scale1 = objectNormal.multiply(d1);
+                    var a1 = scale1.add(intersectDirection);
+                    var scale2 = a1.multiply(2);
+                    var s1 = scale2.subtract(intersectDirection);
+                    var reflectionDirection = s1.unit();
+
+                    var specular = reflectionDirection.dot(lightDirection);
+
+                    if (specular > 0) {
+                        specular = Math.pow(specular, 10)
+                        finalColor = finalColor.addColor(lights[j].color.scaleColor(specular * objectColor.special))
+                    }
+
+
+                }
+
+            }
+
+
+
+
+        }
+
+
+
+    }
+
+    return finalColor;
 }
