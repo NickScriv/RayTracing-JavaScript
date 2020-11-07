@@ -1,13 +1,14 @@
 
-class Color extends Object {
+class Color {
 
 
-    constructor(r, g, b, s) {
-        super();
-        this.red = r || 0.5;
-        this.green = g || 0.5;
-        this.blue = b || 0.5;
-        this.special = s || 0; // special is for shine and reflective properties
+    constructor(r, g, b, spec, checkered) {
+
+        this.red = r;
+        this.green = g;
+        this.blue = b;
+        this.specular = spec || 0; // This is for shine and to calculate reflectivity
+        this.checkered = checkered || false;
     }
 
     // brightness of the color

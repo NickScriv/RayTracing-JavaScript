@@ -1,24 +1,24 @@
 
-class Sphere extends Object {
+class Sphere {
 
 
     constructor(center, r, color) {
-        super();
+
         this.center = center || new Vector(0, 0, 0);
         this.radius = r || 1;
-        this.color = color || new Color(0.5, 0.5, 0.5, 0); // gray color
+        this.color = color || new Color(0.5, 0.5, 0.5); // gray color
     }
 
     // normal of a sphere at a point points away from the center
     getNormalAt(point) {
-        super.getNormalAt(point);
+
         return point.add(this.center.negative()).unit();
 
     }
 
     // 
     findIntersection(ray) {
-        super.findIntersection(ray);
+
         var localRay = ray.clone();
         localRay.origin = localRay.origin.subtract(this.center);
 
