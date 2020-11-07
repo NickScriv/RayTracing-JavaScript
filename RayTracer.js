@@ -31,7 +31,7 @@ var O = new Vector(0, 0, 0);
 const ambientLight = 0.2;
 
 // TODO: Make camera position user defined.
-var cameraPosition = new Vector(-3, 12, 4);
+var cameraPosition = new Vector(-3, 3, 4);
 
 // position for camera to look at, TODO: make this user defined
 var target = new Vector(0, 2, 0);
@@ -62,7 +62,7 @@ var objects = [];
 var lights = [];
 
 //position if lights, TODO: make this user defined
-var light1Pos = new Vector(0, 17, 0);
+var light1Pos = new Vector(30, 17, -9);
 
 //define lights
 var light1 = new Light(light1Pos, whiteLight);
@@ -247,7 +247,7 @@ function colorAt(intersectPosition, intersectDirection, firstObjectIndex) {
 
                 finalColor = finalColor.addColor(objectColor.multiplyColor(lights[j].color).scaleColor(cosAngle))
 
-                // check for shininess/reflection
+                // check for shininess
                 if (objectColor.special > 0 && objectColor.special <= 1) {
                     var d1 = objectNormal.dot(intersectDirection.negative())
                     var scale1 = objectNormal.multiply(d1);

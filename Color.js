@@ -1,9 +1,9 @@
 
-class Color extends Object {
+class Color {
 
 
     constructor(r, g, b, s) {
-        super();
+
         this.red = r || 0.5;
         this.green = g || 0.5;
         this.blue = b || 0.5;
