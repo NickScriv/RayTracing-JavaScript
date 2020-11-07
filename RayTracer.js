@@ -31,7 +31,7 @@ var O = new Vector(0, 0, 0);
 const ambientLight = 0.2;
 
 // TODO: Make camera position user defined.
-var cameraPosition = new Vector(-3, 3, 4);
+var cameraPosition = new Vector(3, 3, 2);
 
 // position for camera to look at, TODO: make this user defined
 var target = new Vector(0, 2, 0);
@@ -52,17 +52,17 @@ var cameraUp = cameraRight.cross(cameraForward);
 var camera = new Camera(cameraPosition, cameraForward, cameraRight, cameraUp, Math.PI / 4, aspectRatio);
 
 // add colors
-var whiteLight = new Color(1.0, 1.0, 1.0, 0);
+var whiteLight = new Color(1.0, 1.0, 1.0);
 var green = new Color(0.5, 1.0, 0.5, 0.3);
-var gray = new Color(0.5, 0.5, 0.5, 0);
-var black = new Color(0, 0, 0, 0);
+var floorColor = new Color(0, 0, 0, 0, true);
+var maroon = new Color(0.25, 0.25, 0.25);
 
 //--------------OBJECTS/LIGHTS------------------------------------------------
 var objects = [];
 var lights = [];
 
 //position if lights, TODO: make this user defined
-var light1Pos = new Vector(30, 17, -9);
+var light1Pos = new Vector(-2, 7, 13);
 
 //define lights
 var light1 = new Light(light1Pos, whiteLight);
@@ -70,15 +70,19 @@ var light1 = new Light(light1Pos, whiteLight);
 
 // sphere position, TODO: make this user defined
 var centerSphere = new Vector(0, 2, 0);
+var centerSphere2 = new Vector(2, 2, 0);
 
-// create sphere
+
+// create spheres
 var sphere = new Sphere(centerSphere, 1, green);
+var sphere2 = new Sphere(centerSphere2, 0.5, maroon);
 
 // create plane
-var plane = new Plane(new Vector(0, 0, 0), Y, gray);
+var floor = new Plane(new Vector(0, 0, 0), Y, floorColor);
 
 objects.push(sphere);
-objects.push(plane);
+objects.push(sphere2);
+objects.push(floor);
 
 lights.push(light1);
 
@@ -195,17 +199,75 @@ function findFirstObject(intersections) {
     }
 }
 
-// Lambertian Shading
+// Phong Shading
 function colorAt(intersectPosition, intersectDirection, firstObjectIndex) {
 
     // color of the closest object 
     var objectColor = objects[firstObjectIndex].color;
 
-    // factor in the ambient light coefficient
-    var finalColor = objectColor.scaleColor(ambientLight);
 
     // normal vector of the closest object 
     var objectNormal = objects[firstObjectIndex].getNormalAt(intersectPosition);
+
+    // check if we hit the floor
+    if (objectColor.checkered) {
+
+        var squareValue = Math.floor(intersectPosition.z) + Math.floor(intersectPosition.x);
+        // This will make a 1 X 1 checkerboard patter on the floor
+        if ((squareValue % 2) == 0) {
+            objectColor = new Color(0, 0, 0, 0, true)
+        }
+        else {
+            objectColor = new Color(1, 1, 1, 0, true)
+        }
+
+    }
+
+
+    // factor in the ambient light coefficient
+    var finalColor = objectColor.scaleColor(ambientLight);
+
+    if (objectColor.specular > 0 && objectColor.specular <= 1) {
+        // calculate reflection ray: rDir = I - 2(I . n)n 
+        var objNorm = objectNormal.unit();
+        var incident = intersectDirection.unit();
+        var d = objNorm.dot(incident);
+        var norm2 = d * 2;
+        var reflectionDir = incident.subtract(objNorm.multiply(norm2));
+
+        var reflectionRay = new Ray(intersectPosition, reflectionDir);
+        var reflectIntersections = [];
+
+
+        // check to see what the reflection ray intersects with
+        for (var i = 0; i < objects.length; i++) {
+            reflectIntersections.push(objects[i].findIntersection(reflectionRay));
+        }
+
+        // get the first intersection from the z buffer
+        var firstReflectIndex = findFirstObject(reflectIntersections);
+
+        // check if there was an intersection at all
+        if (firstReflectIndex != -1) {
+            // get position of intersection
+            var reflectIntersectionPosition = intersectPosition.add(reflectionDir.multiply(reflectIntersections[firstReflectIndex]));
+
+            // get the color of reflection by calling this function recursively
+            var reflectedColor = colorAt(reflectIntersectionPosition, reflectionRay.direction, firstReflectIndex)
+
+            // add reflected color to final color
+            finalColor = finalColor.addColor(reflectedColor.scaleColor(objectColor.specular))
+            //final_color = final_color.colorAdd(reflection_intersection_color.colorScalar(winning_object_color.getColorSpecial()));
+
+
+        }
+
+    }
+
+
+
+
+
 
     for (var j = 0; j < lights.length; j++) {
 
@@ -248,7 +310,8 @@ function colorAt(intersectPosition, intersectDirection, firstObjectIndex) {
                 finalColor = finalColor.addColor(objectColor.multiplyColor(lights[j].color).scaleColor(cosAngle))
 
                 // check for shininess
-                if (objectColor.special > 0 && objectColor.special <= 1) {
+                if (objectColor.specular > 0 && objectColor.specular <= 1) {
+
                     var d1 = objectNormal.dot(intersectDirection.negative())
                     var scale1 = objectNormal.multiply(d1);
                     var a1 = scale1.add(intersectDirection);
@@ -260,7 +323,7 @@ function colorAt(intersectPosition, intersectDirection, firstObjectIndex) {
 
                     if (specular > 0) {
                         specular = Math.pow(specular, 10)
-                        finalColor = finalColor.addColor(lights[j].color.scaleColor(specular * objectColor.special))
+                        finalColor = finalColor.addColor(lights[j].color.scaleColor(specular * objectColor.specular))
                     }
 
 

@@ -6,7 +6,7 @@ class Sphere {
 
         this.center = center || new Vector(0, 0, 0);
         this.radius = r || 1;
-        this.color = color || new Color(0.5, 0.5, 0.5, 0); // gray color
+        this.color = color || new Color(0.5, 0.5, 0.5); // gray color
     }
 
     // normal of a sphere at a point points away from the center

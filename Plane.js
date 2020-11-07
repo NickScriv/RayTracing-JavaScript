@@ -6,7 +6,7 @@ class Plane {
 
         this.normal = norm || new Vector(0, 1, 0); // normal in y direction by default
         this.position = pos || new Vector(0, 0, 0);// distance from plane to origin
-        this.color = color || new Color(0.5, 0.5, 0.5, 0); // gray color
+        this.color = color || new Color(0, 0, 0, 0, 0, true); // checkerboard
     }
 
     getNormalAt(point) {
