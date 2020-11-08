@@ -31,7 +31,7 @@ var O = new Vector(0, 0, 0);
 const ambientLight = 0.2;
 
 // TODO: Make camera position user defined.
-var cameraPosition = new Vector(3, 3, 2);
+var cameraPosition = new Vector(14, 13, 2);
 
 // position for camera to look at, TODO: make this user defined
 var target = new Vector(0, 2, 0);
@@ -49,7 +49,7 @@ var cameraRight = cameraForward.cross(Y).unit();
 var cameraUp = cameraRight.cross(cameraForward);
 
 //create camera with its coordinate frame
-var camera = new Camera(cameraPosition, cameraForward, cameraRight, cameraUp, Math.PI / 4, aspectRatio);
+var camera = new Camera(cameraPosition, cameraForward, cameraRight, cameraUp, Math.PI / 8, aspectRatio);
 
 // add colors
 var whiteLight = new Color(1.0, 1.0, 1.0);
@@ -70,7 +70,7 @@ var light1 = new Light(light1Pos, whiteLight);
 
 // sphere position, TODO: make this user defined
 var centerSphere = new Vector(0, 2, 0);
-var centerSphere2 = new Vector(2, 2, 0);
+var centerSphere2 = new Vector(2, 2, -2);
 
 
 // create spheres
@@ -228,7 +228,7 @@ function colorAt(intersectPosition, intersectDirection, firstObjectIndex) {
     var finalColor = objectColor.scaleColor(ambientLight);
 
     if (objectColor.specular > 0 && objectColor.specular <= 1) {
-        // calculate reflection ray: rDir = I - 2(I . n)n 
+        // calculate reflection ray: reflection direction = I - 2(I . n)n 
         var objNorm = objectNormal.unit();
         var incident = intersectDirection.unit();
         var d = objNorm.dot(incident);
