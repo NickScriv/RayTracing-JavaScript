@@ -234,6 +234,20 @@ function addFields_spheres(){
           // Append a line break 
           container.appendChild(document.createElement("br"));
     }
+
+    //Prompt user for input for the radisu of the Sphere. Then give the radius an id for getElementByID()
+    container.appendChild(document.createElement("br"));
+    for (i=0;i<number;i++){
+        // Create an <input> element, set its type and name attributes
+        var input = document.createElement("input");
+        input.type = "text";
+        input.name = "Spheres" + (i+1);
+        input.id = "spheresRadius" + (i+1);
+        input.placeholder = "Radius of the Sphere  " + (i+1) + ": ";
+          container.appendChild(input);
+          // Append a line break 
+          container.appendChild(document.createElement("br"));
+    }
 }
 //-----------------------------------------------------------------------------------------------------------------------------------//
 
@@ -282,13 +296,15 @@ function create_objects(){
         var sphereColorB = parseFloat(document.getElementById("spheresB" + (i+1)).value);
         var sphereColorS = parseFloat(document.getElementById("spheresS" + (i+1)).value);
 
+        var sphereRadius = parseFloat(document.getElementById("spheresRadius" + (i+1)).value);
+
         // sphere position
         var spherePos = new Vector(spherePosX, spherePosY, spherePosZ);
 
         var sphereColor = new Color(sphereColorR, sphereColorG, sphereColorB, sphereColorS);
 
         // create spheres NEED TO ADD RADIUS OPTION 
-        var sphere = new Sphere(spherePos, 1, sphereColor);
+        var sphere = new Sphere(spherePos, sphereRadius, sphereColor);
 
         var floor = new Plane(new Vector(0, 0, 0), Y, floorColor);
 
