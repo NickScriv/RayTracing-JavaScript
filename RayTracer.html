@@ -2,6 +2,7 @@
 <html>
   <head>
     <title>Ray Tracer</title>
+    <!-- SOURCE FOR STYLING: https://www.w3docs.com/learn-html/html-form-templates.html -->
     <link href='https://fonts.googleapis.com/css?family=Open+Sans:400,300,300italic,400italic,600' rel='stylesheet' type='text/css'>
     <link href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700" rel="stylesheet">
     <style>
@@ -123,29 +124,27 @@
     <div class="main-block">
       <h1>Ray Tracer</h1>
         <div class="forminput">
-
+        <!-- Prompt user for x,y,z of camera position -->
         <h3>Camera Position</h3>
         <input type="text" id = "cameraPositionX" placeholder="Enter x value of Camera Postion:">
         <input type="text" id = "cameraPositionY" placeholder="Enter y value of Camera Postion:">
         <input type="text" id = "cameraPositionZ" placeholder="Enter z value of Camera Postion:">
-
+        <!-- Prompt user for x,y,z of target position -->
         <h3>Target Position</h3>
         <input type="text" id = "targetPostionX" placeholder="Enter x value of Target position:">
         <input type="text" id = "targetPostionY" placeholder="Enter y value of Target position:">
         <input type="text" id = "targetPostionZ" placeholder="Enter z value of Target position:">
-
+        <!-- Prompt user for data of light source -->
         <h3>Light Sources and Colors</h3>
-        <input type="text" id="lightSources" name="lightSorces" value="" placeholder="Amount of Light Sources: (1-10):">
+        <input type="text" id="lightSources" name="lightSorces" value="" placeholder="Amount of Light Sources: (0-10):">
         <button class = "fields_button" onclick="addFields_lights()">Submit Amount of Lights</button>
         <div id="containerLights"></div>
-        
-
+        <!-- Prompt user for data of spheres -->
         <h3>Spheres and Colors</h3>
-        <input type="text" id="numSpheres" name="numSpheres" value="" placeholder="Amount of Spheres: (1-10):">
+        <input type="text" id="numSpheres" name="numSpheres" value="" placeholder="Amount of Spheres: (0-10):">
         <button class = "fields_button" onclick="addFields_spheres()">Submit Amount of Spheres</button>
         <div id="containerSphere"></div>
         
-
         <button onclick="rayTrace();">Submit</button>
       </div>
     </div>
