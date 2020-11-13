@@ -9,8 +9,8 @@ var canvas = document.createElement("canvas");
 var ctx = canvas.getContext("2d");
 
 // width and height of final image
-const WIDTH = window.innerWidth;
-const HEIGHT = window.innerHeight;
+const WIDTH = window.screen.width;
+const HEIGHT = window.screen.height;
 const aspectRatio = WIDTH / HEIGHT;
 
 // size the canvas to your desired image
