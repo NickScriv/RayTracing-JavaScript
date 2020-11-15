@@ -80,8 +80,8 @@ var sphere2 = new Sphere(centerSphere2, 0.5, maroon);
 // create plane
 var floor = new Plane(new Vector(0, 0, 0), Y, floorColor);
 
-objects.push(sphere);
-objects.push(sphere2);
+/*objects.push(sphere);
+objects.push(sphere2);*/
 objects.push(floor);
 
 lights.push(light1);
@@ -249,15 +249,15 @@ function colorAt(intersectPosition, intersectDirection, firstObjectIndex) {
 
         // check if there was an intersection at all
         if (firstReflectIndex != -1) {
-            // get position of intersection
+            // there was, so get position of intersection
             var reflectIntersectionPosition = intersectPosition.add(reflectionDir.multiply(reflectIntersections[firstReflectIndex]));
 
             // get the color of reflection by calling this function recursively
             var reflectedColor = colorAt(reflectIntersectionPosition, reflectionRay.direction, firstReflectIndex)
 
-            // add reflected color to final color
+            // add reflected color to final color scaled by the reflectivity of the current object color
             finalColor = finalColor.addColor(reflectedColor.scaleColor(objectColor.specular))
-            //final_color = final_color.colorAdd(reflection_intersection_color.colorScalar(winning_object_color.getColorSpecial()));
+
 
 
         }
