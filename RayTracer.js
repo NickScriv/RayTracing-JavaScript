@@ -421,7 +421,7 @@ function rayTrace() {
                 var camera = new Camera(cameraPosition, cameraForward, cameraRight, cameraUp, Math.PI / 8, aspectRatio);
 
 
-                // manipulate some pixel elements
+                // manipulate pixel elements
                 for (var x = 0; x < WIDTH; x++) {
                     for (var y = 0; y < HEIGHT; y++) {
 
@@ -496,6 +496,7 @@ function rayTrace() {
 //---------------------------------------------------------------------------------------------------------------------------------------------------------//
 
 //----------------Functions-------------------------
+
 // returns the index of the closest object to the camera
 function findFirstObject(intersections) {
     var minValue;
@@ -650,18 +651,18 @@ function colorAt(intersectPosition, intersectDirection, firstObjectIndex) {
 
                 finalColor = finalColor.addColor(objectColor.multiplyColor(lights[j].color).scaleColor(cosAngle))
 
-                // check for shininess
+                // apply specular component if viable
                 if (objectColor.specular > 0 && objectColor.specular <= 1) {
 
-                    var d1 = objectNormal.dot(intersectDirection.negative())
-                    var scale1 = objectNormal.multiply(d1);
-                    var a1 = scale1.add(intersectDirection);
-                    var scale2 = a1.multiply(2);
-                    var s1 = scale2.subtract(intersectDirection);
-                    var reflectionDirection = s1.unit();
+                    var d = objectNormal.dot(intersectDirection.negative())
+                    var scalar1 = objectNormal.multiply(d);
+                    var a = scalar1.add(intersectDirection);
+                    var scalar2 = a.multiply(2);
+                    var s = scalar2.subtract(intersectDirection);
+                    var reflectDirection = s.unit();
 
-                    var specular = reflectionDirection.dot(lightDirection);
-
+                    var specular = reflectDirection.dot(lightDirection);
+                    // add the specular spot
                     if (specular > 0) {
                         specular = Math.pow(specular, 10)
                         finalColor = finalColor.addColor(lights[j].color.scaleColor(specular * objectColor.specular))

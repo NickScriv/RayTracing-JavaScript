@@ -12,6 +12,8 @@ class Camera {
 
     // shoots a ray from camera into the 3d scene given an x and y in the range of -1 to 1 represented by screen space
     shootRay(x, y) {
+        // direction = forward + x * w * right + y * h * up
+        // origin is just the position of the camera
         var u = this.right.multiply(x * this.w);
         var v = this.up.multiply(y * this.h);
         var direction = this.forward.add(u);
