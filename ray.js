@@ -1,6 +1,7 @@
 
 class Ray {
 
+    // ray is defined by origin and direction
     constructor(origin, dir) {
         this.origin = origin || new Vector(0, 0, 0);
         this.direction = dir || new Vector(1, 0, 0);

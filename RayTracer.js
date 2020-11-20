@@ -496,7 +496,7 @@ function rayTrace() {
 
 //----------------Functions-------------------------
 
-// returns the index of the closest object to the camera
+// returns the index of the closest intersection point of the ray
 function findFirstObject(intersections) {
     var minValue;
     if (intersections.length < 1) {
@@ -547,7 +547,7 @@ function colorAt(intersectPosition, intersectDirection, firstObjectIndex) {
     var objectColor = objects[firstObjectIndex].color;
 
 
-    // normal vector of the closest object 
+    // normal vector of the closest intersection point 
     var objectNormal = objects[firstObjectIndex].getNormalAt(intersectPosition);
 
     // check if we hit the floor
@@ -585,7 +585,7 @@ function colorAt(intersectPosition, intersectDirection, firstObjectIndex) {
             reflectIntersections.push(objects[i].findIntersection(reflectionRay));
         }
 
-        // get the first intersection from the z buffer
+        // get the closest intersection point of the reflection ray 
         var firstReflectIndex = findFirstObject(reflectIntersections);
 
         // check if there was an intersection at all
@@ -609,7 +609,7 @@ function colorAt(intersectPosition, intersectDirection, firstObjectIndex) {
 
 
 
-
+    // iterate through all light sources in the scene
     for (var j = 0; j < lights.length; j++) {
 
 

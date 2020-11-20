@@ -1,7 +1,7 @@
 
 class Sphere {
 
-
+    // sphere is defined by a radius and the position of the center in world space
     constructor(center, r, color) {
 
         this.center = center || new Vector(0, 0, 0);
@@ -16,7 +16,7 @@ class Sphere {
 
     }
 
-    // 
+    // ||Ro + Rd * t|| = r
     findIntersection(ray) {
 
         var localRay = ray.clone();

@@ -1,7 +1,7 @@
 
 class Plane {
 
-
+    // plane is defined by a position and a normal vector
     constructor(pos, norm, color) {
 
         this.normal = norm || new Vector(0, 1, 0); // normal in y direction by default
@@ -14,7 +14,7 @@ class Plane {
         return this.normal; // since the normal at any point of the plane is the same.
     }
 
-    findIntersection(ray) { //return distance of intersection from ray origin
+    findIntersection(ray) {
 
 
         var dotNorm = ray.direction.dot(this.normal);
@@ -31,7 +31,7 @@ class Plane {
             return -1;
         }
 
-        return t;
+        return t;  //return distance of intersection from ray origin
 
     }
 }
