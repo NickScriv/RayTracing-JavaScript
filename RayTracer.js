@@ -1,7 +1,6 @@
 // Final Project: Ray Tracing
-// Name: Nick Scrivanich
-// NetId: ns1284
-// Goal:...
+// Names: Nick Scrivanich - ns1284, David Bradshaw - dab635, Benjamin Jones - bj723
+// Goal: Build a ray tracer
 
 // create a canvas
 
