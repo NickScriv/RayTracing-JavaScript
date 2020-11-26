@@ -313,8 +313,12 @@ function create_lights() {
 //--------------OBJECTS---------------------------------------------------------------------------//
 function create_objects() {
     var floorColor = new Color(0, 0, 0, 0, true);
+    var tri = new Triangle(new Vector(3, 0, 0), new Vector(0, 3, 0), new Vector(0, 0, 3), new Color(0.92, 0.71, 0.34, 0));
+
 
     var objects = [];
+
+    // objects.push(tri);
 
     var regTestDec = RegExp(/^-?(0|[0-9]\d*)(\.\d+)?$/);
     //get number of sphers for for loop
@@ -683,3 +687,5 @@ function colorAt(intersectPosition, intersectDirection, firstObjectIndex) {
 
     return finalColor;
 }
+
+

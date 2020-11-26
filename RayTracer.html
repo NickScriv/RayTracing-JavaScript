@@ -1,152 +1,176 @@
 <!DOCTYPE html>
 <html>
-  <head>
-    <title>Ray Tracer</title>
-    <!-- SOURCE FOR STYLING: https://www.w3docs.com/learn-html/html-form-templates.html -->
-    <link href='https://fonts.googleapis.com/css?family=Open+Sans:400,300,300italic,400italic,600' rel='stylesheet' type='text/css'>
-    <link href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700" rel="stylesheet">
-    <style>
-      html, body {
+
+<head>
+  <title>Ray Tracer</title>
+  <!-- SOURCE FOR STYLING: https://www.w3docs.com/learn-html/html-form-templates.html -->
+  <link href='https://fonts.googleapis.com/css?family=Open+Sans:400,300,300italic,400italic,600' rel='stylesheet'
+    type='text/css'>
+  <link href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700" rel="stylesheet">
+  <style>
+    html,
+    body {
       height: 100%;
-      }
-      body{ 
+    }
+
+    body {
       padding: 0;
       margin: 0;
       outline: none;
       font-family: Roboto, Arial, sans-serif;
       font-size: 16px;
       color: rgb(255, 255, 255);
-      }
-      h1, h3 {
+    }
+
+    h1,
+    h3 {
       font-weight: 400;
-      }
-      h1 {
+    }
+
+    h1 {
       color: white;
-	    font-size: 40px;
-	    text-shadow: -1px 1px 2px #000,
-				  1px 1px 2px #000,
-				  1px -1px 0 #000,
-				  -1px -1px 0 #000;
-      }
-      h3 {
+      font-size: 40px;
+      text-shadow: -1px 1px 2px #000,
+        1px 1px 2px #000,
+        1px -1px 0 #000,
+        -1px -1px 0 #000;
+    }
+
+    h3 {
       color: #1c87c9;
-      }
-      .main-block, .info {
+    }
+
+    .main-block,
+    .info {
       display: flex;
       flex-direction: column;
-      }
-      .main-block {
+    }
+
+    .main-block {
       justify-content: center;
       align-items: center;
-      width: 100%; 
+      width: 100%;
       min-height: 100%;
       background: url("https://external-preview.redd.it/0Ci_3XjabPPpLOqumVXTpdM6wa9ogYwFnf_fbyhylA4.png?auto=webp&s=25878f8808fddb1fec1f5db3c318178b076cdabe") no-repeat center;
       background-size: cover;
-      }
-      .forminput {
-      width: 80%; 
+    }
+
+    .forminput {
+      width: 80%;
       padding: 25px;
       margin-bottom: 20px;
       background: rgba(2, 0, 0, 0.9);
-      }
-      input{
+    }
+
+    input {
       padding: 5px;
-      margin-bottom: 1px; 
+      margin-bottom: 1px;
       background: transparent;
       border: none;
       font-family: Roboto, Arial, sans-serif;
       font-size: 16px;
       color: rgb(255, 255, 255);
       border-bottom: 1px solid #eee;
-      }
-      input::placeholder {
-      color: #eee;
-      }
-      option {
-      background: black; 
-      border: none;
-      }
+    }
 
-      button {
+    input::placeholder {
+      color: #eee;
+    }
+
+    option {
+      background: black;
+      border: none;
+    }
+
+    button {
       display: block;
       width: 200px;
       padding: 10px;
       margin: 20px auto 0;
       border: none;
-      border-radius: 5px; 
-      background: #1c87c9; 
+      border-radius: 5px;
+      background: #1c87c9;
       font-size: 14px;
       font-weight: 600;
       color: #fff;
-      }
-      button:hover {
+    }
+
+    button:hover {
       background: #095484;
-      }
-      .fields_button{
+    }
+
+    .fields_button {
       display: block;
       width: 170px;
       padding: 12x;
       margin: 10px auto 0;
       border: none;
-      border-radius: 5px; 
-      background: #1c87c9; 
+      border-radius: 5px;
+      background: #1c87c9;
       font-size: 12px;
       font-weight: 100;
       color: #fff;
-      margin-right:50px;
-      }
-      @media (min-width: 400px) {
+      margin-right: 50px;
+    }
+
+    @media (min-width: 400px) {
       .info {
-      flex-flow: row wrap;
-      justify-content: space-between;
+        flex-flow: row wrap;
+        justify-content: space-between;
       }
+
       input {
-      width: 80%;
+        width: 80%;
       }
+
       input.fname {
-      width: 100%;
+        width: 100%;
       }
+
       select {
-      width: 48%;
+        width: 48%;
       }
     }
-    </style>
-    <script src="vector.js"></script>
-    <script src="ray.js"></script>
-    <script src="Camera.js"></script>
-    <script src="Color.js"></script>
-    <script src="Light.js"></script>
-    <script src="Sphere.js"></script>
-    <script src="Plane.js"></script>
-    <script src="RayTracer.js"></script>
-  </head>
-  <body>
-    <div class="main-block">
-      <h1>Ray Tracer</h1>
-        <div class="forminput">
-        <!-- Prompt user for x,y,z of camera position -->
-        <h3>Camera Position</h3>
-        <input type="text" id = "cameraPositionX" placeholder="Enter x value of Camera Postion:">
-        <input type="text" id = "cameraPositionY" placeholder="Enter y value of Camera Postion:">
-        <input type="text" id = "cameraPositionZ" placeholder="Enter z value of Camera Postion:">
-        <!-- Prompt user for x,y,z of target position -->
-        <h3>Target Position</h3>
-        <input type="text" id = "targetPostionX" placeholder="Enter x value of Target position:">
-        <input type="text" id = "targetPostionY" placeholder="Enter y value of Target position:">
-        <input type="text" id = "targetPostionZ" placeholder="Enter z value of Target position:">
-        <!-- Prompt user for data of light source -->
-        <h3>Light Sources and Colors</h3>
-        <input type="text" id="lightSources" name="lightSorces" value="" placeholder="Amount of Light Sources: (0-10):">
-        <button class = "fields_button" onclick="addFields_lights()">Submit Amount of Lights</button>
-        <div id="containerLights"></div>
-        <!-- Prompt user for data of spheres -->
-        <h3>Spheres and Colors</h3>
-        <input type="text" id="numSpheres" name="numSpheres" value="" placeholder="Amount of Spheres: (0-10):">
-        <button class = "fields_button" onclick="addFields_spheres()">Submit Amount of Spheres</button>
-        <div id="containerSphere"></div>
-        
-        <button onclick="rayTrace();">Submit</button>
-      </div>
+  </style>
+  <script src="vector.js"></script>
+  <script src="ray.js"></script>
+  <script src="Camera.js"></script>
+  <script src="Color.js"></script>
+  <script src="Light.js"></script>
+  <script src="Sphere.js"></script>
+  <script src="Plane.js"></script>
+  <script src="Triangle.js"></script>
+  <script src="RayTracer.js"></script>
+</head>
+
+<body>
+  <div class="main-block">
+    <h1>Ray Tracer</h1>
+    <div class="forminput">
+      <!-- Prompt user for x,y,z of camera position -->
+      <h3>Camera Position</h3>
+      <input type="text" id="cameraPositionX" placeholder="Enter x value of Camera Postion:">
+      <input type="text" id="cameraPositionY" placeholder="Enter y value of Camera Postion:">
+      <input type="text" id="cameraPositionZ" placeholder="Enter z value of Camera Postion:">
+      <!-- Prompt user for x,y,z of target position -->
+      <h3>Target Position</h3>
+      <input type="text" id="targetPostionX" placeholder="Enter x value of Target position:">
+      <input type="text" id="targetPostionY" placeholder="Enter y value of Target position:">
+      <input type="text" id="targetPostionZ" placeholder="Enter z value of Target position:">
+      <!-- Prompt user for data of light source -->
+      <h3>Light Sources and Colors</h3>
+      <input type="text" id="lightSources" name="lightSorces" value="" placeholder="Amount of Light Sources: (0-10):">
+      <button class="fields_button" onclick="addFields_lights()">Submit Amount of Lights</button>
+      <div id="containerLights"></div>
+      <!-- Prompt user for data of spheres -->
+      <h3>Spheres and Colors</h3>
+      <input type="text" id="numSpheres" name="numSpheres" value="" placeholder="Amount of Spheres: (0-10):">
+      <button class="fields_button" onclick="addFields_spheres()">Submit Amount of Spheres</button>
+      <div id="containerSphere"></div>
+
+      <button onclick="rayTrace();">Submit</button>
     </div>
-  </body>
+  </div>
+</body>
+
 </html>
