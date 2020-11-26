@@ -1,24 +1,20 @@
-// Final Project: Ray Tracing
-// Names: Nick Scrivanich - ns1284, David Bradshaw - dab635, Benjamin Jones - bj723
-// Goal: Build a ray tracer
+
+
+
+
 
 // create a canvas
-
 var canvas = document.createElement("canvas");
 var ctx = canvas.getContext("2d");
 
 // width and height of final image
-const WIDTH = window.screen.width;
-const HEIGHT = window.screen.height;
-const aspectRatio = WIDTH / HEIGHT;
-
-// size the canvas to your desired image
-canvas.width = WIDTH;
-canvas.height = HEIGHT;
+var WIDTH = window.screen.width;
+var HEIGHT = window.screen.height;
+var aspectRatio;
 
 // get the imageData and pixel array from the canvas
-var imgData = ctx.getImageData(0, 0, WIDTH, HEIGHT);
-var data = imgData.data;
+var imgData;
+var data;
 
 // basis vectors
 var X = new Vector(1, 0, 0);
@@ -375,6 +371,7 @@ function create_objects() {
 
 //-----------------------------------------------------RAYTRACE--------------------------------------------------------------------------------------------//
 function rayTrace() {
+
     var regTest = RegExp(/^[0-9]\d*$/);
     var regTestDec = RegExp(/^-?(0|[1-9]\d*)(\.\d+)?$/);
 
@@ -409,6 +406,20 @@ function rayTrace() {
                 alert("ERROR: Input invalid for X, Y, or Z value for Target Position");
             }
             else {
+
+                // width and height of final image
+                WIDTH = window.screen.width;
+                HEIGHT = window.screen.height;
+                aspectRatio = WIDTH / HEIGHT;
+
+                // set size of canvas
+                canvas.width = WIDTH;
+                canvas.height = HEIGHT;
+
+                // get the imageData and pixel array from the canvas
+                imgData = ctx.getImageData(0, 0, WIDTH, HEIGHT);
+                data = imgData.data;
+
 
                 create_objects();
 
@@ -494,6 +505,8 @@ function rayTrace() {
 
                 // create a new img object
                 var image = new Image();
+                image.style.height = parseInt(HEIGHT) + 'px';
+                image.style.width = parseInt(WIDTH) + 'px';
 
                 // set the img.src to the canvas data url
                 image.src = canvas.toDataURL();
