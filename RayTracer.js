@@ -33,6 +33,9 @@ const ambientLight = 0.2;
 // add colors
 var green = new Color(0.5, 1.0, 0.5, 0.3);
 
+var objects = [];
+var lights = [];
+
 //---------------------------------ADDFIELDS TO HTML---------------------------------------------------------------------------------//
 function addFields_lights() {
     //SOURCE: https://stackoverflow.com/questions/14853779/adding-input-elements-dynamically-to-form
@@ -273,7 +276,7 @@ function addFields_spheres() {
 
 //------------------------------------LIGHTS------------------------------------------------------//
 function create_lights() {
-    var lights = [];
+
 
     var regTestDec = RegExp(/^-?(0|[0-9]\d*)(\.\d+)?$/);
     //get number of light sources for loop
@@ -306,7 +309,7 @@ function create_lights() {
     }
 
 
-    return lights;
+
 }
 //------------------------------------------------------------------------------------------------//
 
@@ -316,7 +319,6 @@ function create_objects() {
     var tri = new Triangle(new Vector(3, 0, 0), new Vector(0, 3, 0), new Vector(0, 0, 3), new Color(0.92, 0.71, 0.34, 0));
 
 
-    var objects = [];
 
     // objects.push(tri);
 
@@ -345,7 +347,7 @@ function create_objects() {
             else {
                 var sphereRadius = parseFloat(document.getElementById("spheresRadius" + (i + 1)).value);
                 //check for input of sphere radius 
-                if (sphereRadius < 0.0 || !regTestDec.test(sphereRadius)) {
+                if (sphereRadius < 0.5 || !regTestDec.test(sphereRadius)) {
                     throw alert("ERROR: Input invalid for sphere radius");
                 }
                 else {
@@ -366,7 +368,8 @@ function create_objects() {
     var floor = new Plane(new Vector(0, 0, 0), Y, floorColor);
     objects.push(floor);
 
-    return objects;
+
+
 }
 //------------------------------------------------------------------------------------------------//
 
@@ -385,7 +388,7 @@ function rayTrace() {
         alert("ERROR: Input invalid for number of lights or spheres");
     }
     else {
-        var objects = create_objects();
+
 
         //grab values from html for camera position
         cameraPositionX = parseFloat(document.getElementById('cameraPositionX').value);
@@ -406,6 +409,11 @@ function rayTrace() {
                 alert("ERROR: Input invalid for X, Y, or Z value for Target Position");
             }
             else {
+
+                create_objects();
+
+                create_lights();
+
                 var target = new Vector(TargetPositionX, TargetPositionY, TargetPositionZ);
 
                 // vector between camera position and position to look at
@@ -543,9 +551,6 @@ function findFirstObject(intersections) {
 
 // Shading
 function colorAt(intersectPosition, intersectDirection, firstObjectIndex) {
-
-    var lights = create_lights();
-    var objects = create_objects();
 
     // color of the closest object 
     var objectColor = objects[firstObjectIndex].color;

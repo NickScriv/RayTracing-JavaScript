@@ -13,6 +13,12 @@
       height: 100%;
     }
 
+    #file-button {
+      padding: 10px;
+      color: white;
+      background-color: ;
+    }
+
     body {
       padding: 0;
       margin: 0;
@@ -113,6 +119,26 @@
       margin-right: 50px;
     }
 
+    .obj_button {
+      display: inline;
+      width: 170px;
+      padding: 12x;
+      margin: 10px 0 0;
+      border: none;
+      border-radius: 5px;
+      background: #1c87c9;
+      font-size: 12px;
+      font-weight: 100;
+      color: #fff;
+      margin-right: 10px;
+    }
+
+    #file-text {
+      color: #aaa;
+    }
+
+
+
     @media (min-width: 400px) {
       .info {
         flex-flow: row wrap;
@@ -130,6 +156,8 @@
       select {
         width: 48%;
       }
+
+
     }
   </style>
   <script src="vector.js"></script>
@@ -167,6 +195,11 @@
       <input type="text" id="numSpheres" name="numSpheres" value="" placeholder="Amount of Spheres: (0-10):">
       <button class="fields_button" onclick="addFields_spheres()">Submit Amount of Spheres</button>
       <div id="containerSphere"></div>
+      <h3>Load obj model</h3>
+      <button class="obj_button">Choose a file</button>
+      <span id="file-text">No file chosen</span>
+      <input type="file" id="real-file" hidden="hidden" />
+
 
       <button onclick="rayTrace();">Submit</button>
     </div>
