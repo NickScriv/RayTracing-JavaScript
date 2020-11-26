@@ -225,12 +225,36 @@
         if (filename.indexOf('\\') === 0 || filename.indexOf('/') === 0) {
           filename = filename.substring(1);
         }
-        fileText.innerHTML = filename;
+
+        if (validate(filename)) {
+          fileText.innerHTML = filename;
+          objFile = realFile;
+        }
+        else {
+          fileText.innerHTML = "No file chosen"
+          objFile = null;
+          alert("ERROR: Invalid file. Only .obj files are allowed.");
+        }
+
       }
       else {
         fileText.innerHTML = "No file chosen"
+        objFile = null;
       }
     })
+
+    function validate(fileName) {
+
+      var file_extension = fileName.split('.').pop().toLowerCase();
+
+      if ("obj" == file_extension) {
+        return true; // its an obj file
+      }
+      else {
+        return false; // its not
+      }
+
+    }
 
 
 
