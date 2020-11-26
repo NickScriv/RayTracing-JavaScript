@@ -369,6 +369,36 @@ function create_objects() {
 }
 //------------------------------------------------------------------------------------------------//
 
+//--------------obj MODEL---------------------------------------------------------------------------//
+function create_objModel() {
+
+    if (objFile == null)
+        return;
+
+    const reader = new FileReader();
+
+    // parse obj file
+    reader.onload = (event) => {
+        const file = event.target.result;
+        const allLines = file.split(/\r\n|\n/);
+        // Reading line by line
+        allLines.forEach((line) => {
+            if (line[0] != 'v' && line[0] != 'f')
+                return;
+
+            console.log(line[0]);
+        });
+    };
+
+    reader.onerror = (event) => {
+        alert(event.target.error.name);
+    };
+
+    reader.readAsText(objFile);
+
+}
+//------------------------------------------------------------------------------------------------//
+
 //-----------------------------------------------------RAYTRACE--------------------------------------------------------------------------------------------//
 function rayTrace() {
 
@@ -422,6 +452,7 @@ function rayTrace() {
 
 
                 create_objects();
+                create_objModel();
 
                 create_lights();
 

@@ -228,7 +228,8 @@
 
         if (validate(filename)) {
           fileText.innerHTML = filename;
-          objFile = realFile;
+          objFile = realFile.files[0];
+          console.log(objFile);
         }
         else {
           fileText.innerHTML = "No file chosen"
