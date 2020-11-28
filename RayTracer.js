@@ -1,8 +1,5 @@
 var objFile = null;
 
-
-
-
 // create a canvas
 var canvas = document.createElement("canvas");
 var ctx = canvas.getContext("2d");
@@ -34,7 +31,6 @@ var lights = [];
 
 //---------------------------------ADDFIELDS TO HTML---------------------------------------------------------------------------------//
 function addFields_lights() {
-    //SOURCE: https://stackoverflow.com/questions/14853779/adding-input-elements-dynamically-to-form
     //regular expresion for only numbers 0-10
     var regTest = RegExp(/^[0-9]\d*$/);
 
@@ -59,7 +55,7 @@ function addFields_lights() {
             input.type = "text";
             input.name = "lightSources" + (i + 1);
             input.id = "lightSourcesX" + (i + 1);
-            input.placeholder = "Position X of Light Source  " + (i + 1) + ": ";
+            input.placeholder = "Position X of Light Source  " + (i + 1) + ":";
             container.appendChild(input);
             // Append a line break 
             container.appendChild(document.createElement("br"));
@@ -101,7 +97,7 @@ function addFields_lights() {
             input.type = "text";
             input.name = "lightSources" + (i + 1);
             input.id = "lightColorsR" + (i + 1);
-            input.placeholder = "Value r of Light Color  " + (i + 1) + ": ";
+            input.placeholder = "Value r of Light Color  " + (i + 1) + ": (0.0 - 1.0)";
             container.appendChild(input);
             // Append a line break 
             container.appendChild(document.createElement("br"));
@@ -115,7 +111,7 @@ function addFields_lights() {
             input.type = "text";
             input.name = "lightSources" + (i + 1);
             input.id = "lightColorsG" + (i + 1);
-            input.placeholder = "Value g of Light Color  " + (i + 1) + ": ";
+            input.placeholder = "Value g of Light Color  " + (i + 1) + ": (0.0 - 1.0)";
             container.appendChild(input);
             // Append a line break 
             container.appendChild(document.createElement("br"));
@@ -129,7 +125,7 @@ function addFields_lights() {
             input.type = "text";
             input.name = "lightSources" + (i + 1);
             input.id = "lightColorsB" + (i + 1);
-            input.placeholder = "Value b of Light Color  " + (i + 1) + ": ";
+            input.placeholder = "Value b of Light Color  " + (i + 1) + ": (0.0 - 1.0)";
             container.appendChild(input);
             // Append a line break 
             container.appendChild(document.createElement("br"));
@@ -205,7 +201,7 @@ function addFields_spheres() {
             input.type = "text";
             input.name = "Spheres" + (i + 1);
             input.id = "spheresR" + (i + 1);
-            input.placeholder = "Value r of Sphere Color  " + (i + 1) + ": ";
+            input.placeholder = "Value r of Sphere Color  " + (i + 1) + ": (0.0 - 1.0)";
             container.appendChild(input);
             // Append a line break 
             container.appendChild(document.createElement("br"));
@@ -219,7 +215,7 @@ function addFields_spheres() {
             input.type = "text";
             input.name = "Spheres" + (i + 1);
             input.id = "spheresG" + (i + 1);
-            input.placeholder = "Value g of Sphere Color  " + (i + 1) + ": ";
+            input.placeholder = "Value g of Sphere Color  " + (i + 1) + ": (0.0 - 1.0)";
             container.appendChild(input);
             // Append a line break 
             container.appendChild(document.createElement("br"));
@@ -233,7 +229,7 @@ function addFields_spheres() {
             input.type = "text";
             input.name = "Spheres" + (i + 1);
             input.id = "spheresB" + (i + 1);
-            input.placeholder = "Value b of Sphere Color  " + (i + 1) + ": ";
+            input.placeholder = "Value b of Sphere Color  " + (i + 1) + ": (0.0 - 1.0)";
             container.appendChild(input);
             // Append a line break 
             container.appendChild(document.createElement("br"));
@@ -247,7 +243,7 @@ function addFields_spheres() {
             input.type = "text";
             input.name = "Spheres" + (i + 1);
             input.id = "spheresS" + (i + 1);
-            input.placeholder = "Value s of Sphere Color  " + (i + 1) + ": ";
+            input.placeholder = "Value s of Sphere Color  " + (i + 1) + ": (0.0 - 1.0)";
             container.appendChild(input);
             // Append a line break 
             container.appendChild(document.createElement("br"));
@@ -272,6 +268,7 @@ function addFields_spheres() {
 
 //------------------------------------LIGHTS------------------------------------------------------//
 function create_lights() {
+
 
 
     var regTestDec = RegExp(/^-?(0|[0-9]\d*)(\.\d+)?$/);
@@ -311,12 +308,9 @@ function create_lights() {
 
 //--------------OBJECTS---------------------------------------------------------------------------//
 function create_objects() {
+
     var floorColor = new Color(0, 0, 0, 0, true);
-    var tri = new Triangle(new Vector(3, 0, 0), new Vector(0, 3, 0), new Vector(0, 0, 3), new Color(0.92, 0.71, 0.34, 0));
 
-
-
-    // objects.push(tri);
 
     var regTestDec = RegExp(/^-?(0|[0-9]\d*)(\.\d+)?$/);
     //get number of sphers for for loop
@@ -372,10 +366,39 @@ function create_objects() {
 //--------------obj MODEL---------------------------------------------------------------------------//
 function create_objModel() {
 
-    if (objFile == null)
+
+    if (objFile == null) {
+        rayTrace();
         return;
 
-    const reader = new FileReader();
+    }
+
+    var objColor = new Color(255 / 255, 99 / 255, 71 / 255, 0);
+
+    var regTestDec = RegExp(/^-?(0|[0-9]\d*)(\.\d+)?$/);
+
+    var objColorR = parseFloat(document.getElementById("objColorR").value);
+    var objColorG = parseFloat(document.getElementById("objColorG").value);
+    var objColorB = parseFloat(document.getElementById("objColorB").value);
+    var objColorS = parseFloat(document.getElementById("objColorS").value);
+    //Check if all input for R,G,B,S is correct.
+    if (objColorR < 0.0 || objColorR > 1 || objColorG < 0.0 || objColorG > 1 || objColorB < 0.0 || objColorB > 1 ||
+        objColorS < 0.0 || objColorS > 1 || !regTestDec.test(objColorR) || !regTestDec.test(objColorG) || !regTestDec.test(objColorB) ||
+        !regTestDec.test(objColorS)) {
+        throw alert("ERROR: Input invalid for R, G, B, or S for object color");
+    }
+    else {
+        objColor = new Color(objColorR, objColorG, objColorB, objColorS);
+
+    }
+
+    var verticies = [];
+    var normals = [];
+    var faces = [];
+    var minValue = Number.MAX_VALUE;
+
+
+    var reader = new FileReader();
 
     // parse obj file
     reader.onload = (event) => {
@@ -386,8 +409,83 @@ function create_objModel() {
             if (line[0] != 'v' && line[0] != 'f')
                 return;
 
-            console.log(line[0]);
+            // vertex
+            if (line[0] == 'v' && line[1] == ' ') {
+                var res = line.split(" ");
+                var vertex = [];
+                var yVal = parseFloat(res[2]);
+
+                vertex.push(parseFloat(res[1]));
+                vertex.push(yVal);
+                vertex.push(parseFloat(res[3]));
+                verticies.push(vertex);
+
+                minValue = Math.min(minValue, yVal);
+            }
+            // normal
+            else if (line[0] == 'v' && line[1] == 'n') {
+                var res = line.split(" ");
+                var normal = [];
+
+                normal.push(parseFloat(res[1]));
+                normal.push(parseFloat(res[2]));
+                normal.push(parseFloat(res[3]));
+                normals.push(normal);
+
+            }
+            // face
+            else if (line[0] == 'f' && line[1] == ' ') {
+                var res = line.split(" ");
+                var face = [];
+                var res1 = res[1].split("//");
+                var res2 = res[2].split("//");
+                var res3 = res[3].split("//");
+
+                var normalIndex = parseInt(res1[1]);
+
+
+                face.push(parseInt(res1[0]));
+                face.push(parseInt(res2[0]));
+                face.push(parseInt(res3[0]));
+                face.push(normalIndex);
+                faces.push(face);
+
+
+            }
+
         });
+
+        if (minValue < 0) {
+            minValue = Math.abs(minValue);
+            for (var i = 0; i < verticies.length; i++) {
+                verticies[i][1] += minValue;
+
+
+            }
+
+        }
+
+
+        for (var i = 0; i < faces.length; i++) {
+
+
+            var a = verticies[faces[i][0] - 1];
+            var b = verticies[faces[i][1] - 1];
+            var c = verticies[faces[i][2] - 1];
+            var norm = normals[faces[i][3] - 1];
+
+            // pass c first to keep winding the same
+            var triNorm = new Vector(norm[0], norm[1], norm[2]);
+            var triNorm = triNorm.negative();
+            var tri = new Triangle(new Vector(a[0], a[1], a[2]), new Vector(b[0], b[1], b[2]), new Vector(c[0], c[1], c[2]), objColor, triNorm);
+
+            objects.push(tri);
+
+        }
+
+
+        rayTrace();
+
     };
 
     reader.onerror = (event) => {
@@ -395,6 +493,9 @@ function create_objModel() {
     };
 
     reader.readAsText(objFile);
+
+
+
 
 }
 //------------------------------------------------------------------------------------------------//
@@ -450,10 +551,7 @@ function rayTrace() {
                 imgData = ctx.getImageData(0, 0, WIDTH, HEIGHT);
                 data = imgData.data;
 
-
                 create_objects();
-                create_objModel();
-
                 create_lights();
 
                 var target = new Vector(TargetPositionX, TargetPositionY, TargetPositionZ);
@@ -473,7 +571,6 @@ function rayTrace() {
                 //create camera with its coordinate frame
                 var camera = new Camera(cameraPosition, cameraForward, cameraRight, cameraUp, Math.PI / 8, aspectRatio);
 
-
                 // manipulate pixel elements
                 for (var x = 0; x < WIDTH; x++) {
                     for (var y = 0; y < HEIGHT; y++) {
@@ -482,12 +579,13 @@ function rayTrace() {
                         // translate pixel coordinate so it is in the range of [-1, 1]
                         var u = (2.0 * x) / WIDTH - 1.0;
                         var v = (-2.0 * y) / HEIGHT + 1.0;
-                        //console.log(u + " " + v)
+
 
                         // shoot the ray
                         var ray = camera.shootRay(u, v);
 
                         var intersections = [];
+
 
                         // loop through all objects defined in the scene and determine if there is an intersection with the current ray
                         objects.forEach(function (o) {
@@ -516,7 +614,8 @@ function rayTrace() {
                             var intersectPosition = ray.origin.add(ray.direction.multiply(intersections[firstObjectIndex]))
                             var intersectDirection = ray.direction;
 
-                            var colorIntersect = colorAt(intersectPosition, intersectDirection, firstObjectIndex);
+                            var colorIntersect = colorAt(intersectPosition, intersectDirection, firstObjectIndex, 0);
+
 
 
                             //var color = objects[firstObjectIndex].color;
@@ -594,7 +693,14 @@ function findFirstObject(intersections) {
 }
 
 // Shading
-function colorAt(intersectPosition, intersectDirection, firstObjectIndex) {
+function colorAt(intersectPosition, intersectDirection, firstObjectIndex, depth) {
+
+
+    if (depth > 25) {
+        return new Color(0, 0, 0, 0);
+    }
+
+    var obj = objects[firstObjectIndex];
 
     // color of the closest object 
     var objectColor = objects[firstObjectIndex].color;
@@ -647,7 +753,7 @@ function colorAt(intersectPosition, intersectDirection, firstObjectIndex) {
             var reflectIntersectionPosition = intersectPosition.add(reflectionDir.multiply(reflectIntersections[firstReflectIndex]));
 
             // get the color of reflection by calling this function recursively
-            var reflectedColor = colorAt(reflectIntersectionPosition, reflectionRay.direction, firstReflectIndex)
+            var reflectedColor = colorAt(reflectIntersectionPosition, reflectionRay.direction, firstReflectIndex, depth + 1)
 
             // add reflected color to final color scaled by the reflectivity of the current object color
             finalColor = finalColor.addColor(reflectedColor.scaleColor(objectColor.specular))
@@ -671,6 +777,11 @@ function colorAt(intersectPosition, intersectDirection, firstObjectIndex) {
 
         // angle of intesection point and light
         var cosAngle = objectNormal.dot(lightDirection);
+        if (obj.name == "triangle") {
+            cosAngle = -cosAngle;
+        }
+
+
 
 
         if (cosAngle > 0) { // intersection point is in view of the light

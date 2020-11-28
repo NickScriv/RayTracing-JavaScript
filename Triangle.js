@@ -10,6 +10,7 @@ class Triangle {
         this.color = color;
         this.ac = this.c.subtract(this.a);
         this.ab = this.b.subtract(this.a);
+        this.name = "triangle";
 
         if (normal === undefined) {
             // compute normal vector of plane that triangle lies in
@@ -18,6 +19,7 @@ class Triangle {
 
         }
         else {
+
             this.normal = normal;
         }
 
@@ -67,10 +69,13 @@ class Triangle {
         //check if intersection point lies within the triangle
         if (acDot >= 0 && cbDot >= 0 && baDot >= 0) {
 
-            // point of intersection is inside of all the edges in the trinagle
+            // point of intersection is inside of all the edges in the triangle
+
+
             return t;
         }
         else {
+
             return -1;
         }
 

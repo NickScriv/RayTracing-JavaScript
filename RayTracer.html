@@ -187,21 +187,22 @@
       <input type="text" id="targetPostionZ" placeholder="Enter z value of Target position:">
       <!-- Prompt user for data of light source -->
       <h3>Light Sources and Colors</h3>
-      <input type="text" id="lightSources" name="lightSorces" value="" placeholder="Amount of Light Sources: (0-10):">
+      <input type="text" id="lightSources" name="lightSorces" value="" placeholder="Amount of Light Sources: (0 - 10)">
       <button class="fields_button" onclick="addFields_lights()">Submit Amount of Lights</button>
       <div id="containerLights"></div>
       <!-- Prompt user for data of spheres -->
       <h3>Spheres and Colors</h3>
-      <input type="text" id="numSpheres" name="numSpheres" value="" placeholder="Amount of Spheres: (0-10):">
+      <input type="text" id="numSpheres" name="numSpheres" value="" placeholder="Amount of Spheres: (0 - 10)">
       <button class="fields_button" onclick="addFields_spheres()">Submit Amount of Spheres</button>
       <div id="containerSphere"></div>
-      <h3>Load obj model</h3>
+      <h3>Load obj model (Triangulated models with normals only)</h3>
       <button id="obj-button">Choose a file</button>
       <span id="file-text">No file chosen</span>
       <input type="file" id="real-file" hidden="hidden" />
+      <div id="containerObjColor"></div>
 
 
-      <button onclick="rayTrace();">Submit</button>
+      <button onclick="create_objModel();">Submit</button>
     </div>
   </div>
 
@@ -229,11 +230,14 @@
         if (validate(filename)) {
           fileText.innerHTML = filename;
           objFile = realFile.files[0];
-          console.log(objFile);
+          addColorObjField(1);
+
+
         }
         else {
           fileText.innerHTML = "No file chosen"
           objFile = null;
+          addColorObjField(0);
           alert("ERROR: Invalid file. Only .obj files are allowed.");
         }
 
@@ -241,6 +245,7 @@
       else {
         fileText.innerHTML = "No file chosen"
         objFile = null;
+        addColorObjField(0);
       }
     })
 
@@ -253,6 +258,73 @@
       }
       else {
         return false; // its not
+      }
+
+    }
+
+    function addColorObjField(num) {
+
+      // Container <div> where dynamic content will be placed
+      var container = document.getElementById("containerObjColor");
+      // Clear previous contents of the container
+      while (container.hasChildNodes()) {
+        container.removeChild(container.lastChild);
+      }
+
+      //Prompt user for input for the r value of the Object color. Then give the r value an id for getElementByID()
+      container.appendChild(document.createElement("br"));
+      for (i = 0; i < num; i++) {
+        // Create an <input> element, set its type and name attributes
+        var input = document.createElement("input");
+        input.type = "text";
+        input.name = "objColor";
+        input.id = "objColorR";
+        input.placeholder = "Value r of Object Color: (0.0 - 1.0)";
+        container.appendChild(input);
+        // Append a line break 
+        container.appendChild(document.createElement("br"));
+      }
+
+      //Prompt user for input for the g value of the Object color. Then give the g value an id for getElementByID()
+      container.appendChild(document.createElement("br"));
+      for (i = 0; i < num; i++) {
+        // Create an <input> element, set its type and name attributes
+        var input = document.createElement("input");
+        input.type = "text";
+        input.name = "objColor";
+        input.id = "objColorG";
+        input.placeholder = "Value g of Object Color: (0.0 - 1.0)";
+        container.appendChild(input);
+        // Append a line break 
+        container.appendChild(document.createElement("br"));
+      }
+
+      //Prompt user for input for the b value of the Object color. Then give the b value an id for getElementByID()
+      container.appendChild(document.createElement("br"));
+      for (i = 0; i < num; i++) {
+        // Create an <input> element, set its type and name attributes
+        var input = document.createElement("input");
+        input.type = "text";
+        input.name = "objColor";
+        input.id = "objColorB";
+        input.placeholder = "Value b of Object Color: (0.0 - 1.0)";
+        container.appendChild(input);
+        // Append a line break 
+        container.appendChild(document.createElement("br"));
+      }
+
+      //Prompt user for input for the s value of the Object color. Then give the b value an id for getElementByID()
+      container.appendChild(document.createElement("br"));
+      for (i = 0; i < num; i++) {
+        // Create an <input> element, set its type and name attributes
+        var input = document.createElement("input");
+        input.type = "text";
+        input.name = "objColor";
+        input.id = "objColorS";
+        input.placeholder = "Value s of Object Color: (0.0 - 1.0)";
+        container.appendChild(input);
+        // Append a line break 
+        container.appendChild(document.createElement("br"));
       }
 
     }
