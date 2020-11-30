@@ -441,13 +441,13 @@ function create_objModel() {
                 var res2 = res[2].split("//");
                 var res3 = res[3].split("//");
 
-                var normalIndex = parseInt(res1[1]);
-
 
                 face.push(parseInt(res1[0]));
                 face.push(parseInt(res2[0]));
                 face.push(parseInt(res3[0]));
-                face.push(normalIndex);
+                face.push(parseInt(res1[1]));
+                face.push(parseInt(res2[1]));
+                face.push(parseInt(res3[1]));
                 faces.push(face);
 
 
@@ -472,12 +472,14 @@ function create_objModel() {
             var a = verticies[faces[i][0] - 1];
             var b = verticies[faces[i][1] - 1];
             var c = verticies[faces[i][2] - 1];
-            var norm = normals[faces[i][3] - 1];
+            var normA = normals[faces[i][3] - 1];
+            var normB = normals[faces[i][4] - 1];
+            var normC = normals[faces[i][5] - 1];
 
-            // pass c first to keep winding the same
-            var triNorm = new Vector(norm[0], norm[1], norm[2]);
-            var triNorm = triNorm.negative();
-            var tri = new Triangle(new Vector(a[0], a[1], a[2]), new Vector(b[0], b[1], b[2]), new Vector(c[0], c[1], c[2]), objColor, triNorm);
+            var triNormA = new Vector(normA[0], normA[1], normA[2]);
+            var triNormB = new Vector(normB[0], normB[1], normB[2]);
+            var triNormC = new Vector(normC[0], normC[1], normC[2]);
+            var tri = new Triangle(new Vector(a[0], a[1], a[2]), new Vector(b[0], b[1], b[2]), new Vector(c[0], c[1], c[2]), objColor, triNormA, triNormB, triNormC);
 
             objects.push(tri);
 
@@ -777,9 +779,6 @@ function colorAt(intersectPosition, intersectDirection, firstObjectIndex, depth)
 
         // angle of intesection point and light
         var cosAngle = objectNormal.dot(lightDirection);
-        if (obj.name == "triangle") {
-            cosAngle = -cosAngle;
-        }
 
 
 
